@@ -14,3 +14,31 @@ This API fetches books from OpenLibrary based on subject and stores them in a Po
 - PostgreSQL
 - SQLAlchemy
 - Hosted on Railway
+
+## Some subjects you can request
+-science_fiction
+-fantasy
+-romance
+-mystery
+-horror
+-history
+-biographies
+-children
+-young_adult
+-art
+-religion
+-music
+-poetry
+-drama
+-science
+-mathematics
+-computers
+-business
+-health
+-psychology
+-sports
+-travel
+-law
+-education
+-philosophy
+Find more on: https://openlibrary.org/subjects
