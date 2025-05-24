@@ -4,8 +4,14 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 import pandas as pd
 import requests
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
-app = FastAPI(title="OpenLibrary Books API")
+app = FastAPI(
+    title="OpenLibrary Books API",
+    description="API to fetch books from OpenLibrary by subject and store them in a PostgreSQL database. Allows listing and filtering books.",
+    version="1.0.0"
+)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -77,3 +83,15 @@ def list_books_by_subject(subject: str, limit: int = 100):
         result = conn.execute(query, {'subject': subject})
         books = [dict(row) for row in result]
     return books
+
+
+@app.get("/")
+def read_root():
+    return {"message": "OpenLibrary Books API online"}
+
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/favicon.ico")
+def favicon():
+    return FileResponse("static/favicon.ico")
