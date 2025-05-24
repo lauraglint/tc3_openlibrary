@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI, Query
 from sqlalchemy import create_engine, text
+from sqlalchemy.exc import OperationalError
 import pandas as pd
 import requests
 
@@ -11,7 +12,14 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise Exception("no DATABASE_URL")
 
-engine = create_engine(DATABASE_URL)
+try:
+    engine = create_engine(DATABASE_URL)
+    with engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
+    print("connected")
+except OperationalError as e:
+    print("error connecting", e)
+    engine = None
 
 
 # fetch data from Open Library
@@ -53,6 +61,8 @@ def fetch_and_store_books(subject: str = Query(...), limit: int = Query(100)):
 
 @app.get("/list-books")
 def list_books(limit: int = 100):
+    if engine is None:
+        return {"error": "not connected"}
     query = text(f"SELECT * FROM books LIMIT {limit}")
     with engine.connect() as conn:
         result = conn.execute(query)
