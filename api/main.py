@@ -80,7 +80,7 @@ def list_books(limit: int = 100):
 def list_books_by_subject(subject: str, limit: int = 100):
     query = text(f"SELECT * FROM books WHERE subject = :subject LIMIT {limit}")
     with engine.connect() as conn:
-        result = conn.execute(query, {'subject': subject})
+        result = conn.execute(query).mappings().all()
         books = [dict(row) for row in result]
     return books
 
